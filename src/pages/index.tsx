@@ -1,302 +1,110 @@
+import Footer from "@/components/Footer";
+import Header from "@/components/Headder";
+import ScrollToTop from "@/components/ScrollToTop";
 import Head from "next/head";
-import { CSSProperties, FormEvent, useEffect, useState } from "react";
-
-import { authService } from "@/services/authService";
-
-type AuthMode = "login" | "register";
+import Link from "next/link";
 
 export default function Home() {
-  const [mode, setMode] = useState<AuthMode>("login");
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [userType, setUserType] = useState("user");
-  const [isLoading, setIsLoading] = useState(false);
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [currentUser, setCurrentUser] = useState<{
-    username: string;
-    email: string;
-    user_type: string;
-  } | null>(null);
-
-  useEffect(() => {
-    const loggedIn = authService.isAuthenticated();
-    setIsLoggedIn(loggedIn);
-    setCurrentUser(authService.getUser());
-  }, []);
-
-  const resetFeedback = () => {
-    setError("");
-    setMessage("");
-  };
-
-  const handleModeSwitch = (nextMode: AuthMode) => {
-    setMode(nextMode);
-    resetFeedback();
-  };
-
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    resetFeedback();
-    setIsLoading(true);
-
-    try {
-      if (mode === "register") {
-        const response = await authService.register({
-          username,
-          email,
-          password,
-          user_type: userType,
-        });
-        if (!response.success) {
-          setError(response.message);
-        } else {
-          setMessage(response.message);
-          setIsLoggedIn(true);
-          // setCurrentUser(response.user ?? authService.getUser());
-        }
-      } else {
-        const response = await authService.login({
-          email,
-          password,
-        });
-        if (!response.success) {
-          setError(response.message);
-        } else {
-          setMessage(response.message);
-          setIsLoggedIn(true);
-          setCurrentUser(response.user ?? authService.getUser());
-        }
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleLogout = async () => {
-    setIsLoggingOut(true);
-    try {
-      await authService.logoutWithDeviceTracking();
-      setIsLoggedIn(false);
-      setCurrentUser(null);
-      setUsername("");
-      setEmail("");
-      setPassword("");
-      setMessage("Logged out successfully");
-      setError("");
-    } catch (error) {
-      setError("Error during logout");
-      console.error(error);
-    } finally {
-      setIsLoggingOut(false);
-    }
-  };
-
   return (
     <>
       <Head>
-        <title>Firebase Auth Demo</title>
-        <meta name="description" content="Firebase authentication demo" />
+        <title>Job Way Tech Consultancy | Career & Talent Solutions</title>
+        <meta
+          name="description"
+          content="Job Way Tech Consultancy connects skilled candidates with top employers through training, hiring, and placement support."
+        />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
+      <Header />
+      <main className="relative overflow-hidden bg-slate-50">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute -left-24 top-12 h-72 w-72 rounded-full bg-cyan-300/25 blur-3xl" />
+          <div className="absolute -right-24 top-32 h-80 w-80 rounded-full bg-emerald-300/20 blur-3xl" />
+          <div className="absolute bottom-0 left-1/2 h-64 w-160 -translate-x-1/2 bg-[radial-gradient(circle_at_center,rgba(14,116,144,0.15),transparent_60%)]" />
+        </div>
 
-      <main
-        style={{
-          minHeight: "100vh",
-          display: "grid",
-          placeItems: "center",
-          padding: "1.25rem",
-          background:
-            "radial-gradient(circle at 20% 20%, #f0f9ff 0%, #ecfeff 35%, #f8fafc 100%)",
-        }}
-      >
-        <section
-          style={{
-            width: "100%",
-            maxWidth: "28rem",
-            background: "#ffffff",
-            border: "1px solid #e2e8f0",
-            borderRadius: "1rem",
-            padding: "1.25rem",
-            boxShadow: "0 10px 30px rgba(15, 23, 42, 0.08)",
-          }}
-        >
-          <h1
-            style={{
-              margin: 0,
-              fontSize: "1.5rem",
-              lineHeight: 1.2,
-              color: "#0f172a",
-            }}
-          >
-            Firebase Authentication
-          </h1>
+        <section className="relative mx-auto grid w-full max-w-7xl gap-10 px-4 pb-20 pt-16 md:grid-cols-2 md:items-center md:gap-12 md:px-6 md:pb-24 md:pt-20">
+          <div>
+            <span className="inline-flex items-center rounded-full border border-cyan-200 bg-cyan-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-cyan-700">
+              Job Way Tech Consultancy
+            </span>
 
-          <p style={{ marginTop: "0.5rem", color: "#475569" }}>
-            Register or login with your Firebase project.
-          </p>
+            <h1 className="mt-5 text-4xl font-black leading-tight text-slate-900 sm:text-5xl lg:text-6xl">
+              Build Careers. Hire Better. Grow Faster.
+            </h1>
 
-          <div
-            style={{
-              marginTop: "1rem",
-              display: "flex",
-              gap: "0.5rem",
-            }}
-          >
-            <button
-              type="button"
-              onClick={() => handleModeSwitch("login")}
-              style={{
-                flex: 1,
-                background: mode === "login" ? "#0ea5e9" : "#f1f5f9",
-                color: mode === "login" ? "#ffffff" : "#0f172a",
-                border: "none",
-                borderRadius: "0.625rem",
-                padding: "0.625rem 0.75rem",
-                cursor: "pointer",
-              }}
-            >
-              Login
-            </button>
-            <button
-              type="button"
-              onClick={() => handleModeSwitch("register")}
-              style={{
-                flex: 1,
-                background: mode === "register" ? "#0ea5e9" : "#f1f5f9",
-                color: mode === "register" ? "#ffffff" : "#0f172a",
-                border: "none",
-                borderRadius: "0.625rem",
-                padding: "0.625rem 0.75rem",
-                cursor: "pointer",
-              }}
-            >
-              Register
-            </button>
+            <p className="mt-6 max-w-xl text-base leading-relaxed text-slate-600 sm:text-lg">
+              We help job seekers and businesses succeed with expert
+              recruitment, practical upskilling, and end-to-end hiring solutions
+              tailored to today&apos;s tech market.
+            </p>
+
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link
+                href="#"
+                className="rounded-xl bg-linear-to-r from-cyan-500 to-emerald-500 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-cyan-200 transition hover:brightness-95"
+              >
+                Explore Services
+              </Link>
+              <Link
+                href="#"
+                className="rounded-xl border border-slate-300 bg-white px-6 py-3 text-sm font-bold text-slate-700 transition hover:border-cyan-300 hover:text-cyan-700"
+              >
+                Contact Consultancy Team
+              </Link>
+            </div>
+
+            <div className="mt-10 grid grid-cols-3 gap-4 text-sm">
+              <div className="rounded-xl border border-slate-200 bg-white p-4 text-center shadow-sm">
+                <p className="text-2xl font-extrabold text-slate-900">12K+</p>
+                <p className="mt-1 text-slate-500">Candidates supported</p>
+              </div>
+              <div className="rounded-xl border border-slate-200 bg-white p-4 text-center shadow-sm">
+                <p className="text-2xl font-extrabold text-slate-900">150+</p>
+                <p className="mt-1 text-slate-500">Hiring companies</p>
+              </div>
+              <div className="rounded-xl border border-slate-200 bg-white p-4 text-center shadow-sm">
+                <p className="text-2xl font-extrabold text-slate-900">92%</p>
+                <p className="mt-1 text-slate-500">Successful placements</p>
+              </div>
+            </div>
           </div>
 
-          <form
-            onSubmit={handleSubmit}
-            style={{ marginTop: "1rem", display: "grid", gap: "0.75rem" }}
-          >
-            {mode === "register" && (
-              <input
-                type="text"
-                value={username}
-                onChange={(event) => setUsername(event.target.value)}
-                placeholder="Username"
-                required
-                style={inputStyle}
-              />
-            )}
-
-            <input
-              type="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              placeholder="Email"
-              required
-              style={inputStyle}
-            />
-
-            <input
-              type="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              placeholder="Password"
-              required
-              minLength={6}
-              style={inputStyle}
-            />
-
-            {mode === "register" && (
-              <select
-                value={userType}
-                onChange={(event) => setUserType(event.target.value)}
-                style={inputStyle}
-              >
-                <option value="user">User</option>
-                <option value="admin">Admin</option>
-              </select>
-            )}
-
-            <button
-              type="submit"
-              disabled={isLoading}
-              style={{
-                marginTop: "0.25rem",
-                background: "#0284c7",
-                color: "#ffffff",
-                border: "none",
-                borderRadius: "0.625rem",
-                padding: "0.7rem 0.9rem",
-                cursor: isLoading ? "not-allowed" : "pointer",
-                opacity: isLoading ? 0.75 : 1,
-              }}
-            >
-              {isLoading
-                ? "Please wait..."
-                : mode === "register"
-                  ? "Create account"
-                  : "Sign in"}
-            </button>
-          </form>
-
-          {error && (
-            <p style={{ marginTop: "0.8rem", color: "#b91c1c" }}>{error}</p>
-          )}
-          {message && (
-            <p style={{ marginTop: "0.8rem", color: "#0369a1" }}>{message}</p>
-          )}
-
-          {isLoggedIn && currentUser && (
-            <div
-              style={{
-                marginTop: "1rem",
-                background: "#f8fafc",
-                border: "1px solid #e2e8f0",
-                borderRadius: "0.75rem",
-                padding: "0.75rem",
-              }}
-            >
-              <p style={{ margin: 0, color: "#0f172a" }}>
-                Signed in as: <strong>{currentUser.email}</strong>
-              </p>
-              <p style={{ margin: "0.35rem 0 0", color: "#334155" }}>
-                Username: {currentUser.username} | Role: {currentUser.user_type}
-              </p>
-              <button
-                type="button"
-                onClick={handleLogout}
-                disabled={isLoggingOut}
-                style={{
-                  marginTop: "0.75rem",
-                  background: "#ef4444",
-                  color: "#ffffff",
-                  border: "none",
-                  borderRadius: "0.625rem",
-                  padding: "0.5rem 0.75rem",
-                  cursor: isLoggingOut ? "not-allowed" : "pointer",
-                  opacity: isLoggingOut ? 0.75 : 1,
-                }}
-              >
-                {isLoggingOut ? "Logging out..." : "Logout"}
-              </button>
+          <div className="relative">
+            <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_25px_80px_-35px_rgba(2,132,199,0.45)] sm:p-8">
+              <div className="rounded-2xl bg-linear-to-br from-slate-900 via-slate-800 to-cyan-900 p-6 text-white sm:p-8">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-200">
+                  Featured service track
+                </p>
+                <h2 className="mt-3 text-2xl font-bold leading-tight">
+                  Recruitment + Upskilling Acceleration Program
+                </h2>
+                <p className="mt-4 text-sm leading-relaxed text-slate-200">
+                  Structured hiring pipeline support with candidate screening,
+                  role-based training, interview preparation, and onboarding
+                  assistance.
+                </p>
+                <div className="mt-6 grid grid-cols-2 gap-3 text-xs font-medium text-cyan-100">
+                  <span className="rounded-lg bg-white/10 px-3 py-2 text-center">
+                    Talent sourcing
+                  </span>
+                  <span className="rounded-lg bg-white/10 px-3 py-2 text-center">
+                    Skill assessments
+                  </span>
+                  <span className="rounded-lg bg-white/10 px-3 py-2 text-center">
+                    Interview coordination
+                  </span>
+                  <span className="rounded-lg bg-white/10 px-3 py-2 text-center">
+                    Onboarding support
+                  </span>
+                </div>
+              </div>
             </div>
-          )}
+          </div>
         </section>
       </main>
+      <Footer />
+      <ScrollToTop />
     </>
   );
 }
-
-const inputStyle: CSSProperties = {
-  width: "100%",
-  border: "1px solid #cbd5e1",
-  borderRadius: "0.625rem",
-  padding: "0.625rem 0.75rem",
-  outline: "none",
-};

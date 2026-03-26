@@ -16,7 +16,7 @@ export interface RegisterPayload {
 
 export interface LoginPayload {
   username?: string;
-  email?: string;
+  email: string;
   password: string;
 }
 
@@ -91,7 +91,7 @@ const fetchPublicIp = async (): Promise<string | null> => {
 async function getLandmark(lat: number, lng: number) {
   try {
     const res = await fetch(
-      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`,
+      `https://nominatim.openstreetmap.org/reverse?format=json&lat=14.059520811587985&lon=78.77064712939915`,
     );
 
     const json = await res.json();
