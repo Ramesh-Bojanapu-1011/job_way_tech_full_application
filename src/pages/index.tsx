@@ -3,8 +3,90 @@ import Header from "@/components/Headder";
 import ScrollToTop from "@/components/ScrollToTop";
 import Head from "next/head";
 import Link from "next/link";
+import { useState } from "react";
 
 export default function Home() {
+  const GRID_FADE_DURATION_MS = 280;
+
+  const categories = [
+    "All",
+    "Freshers",
+    "Short Term Courses",
+    "Working Professionals",
+    "Protocol Courses",
+    "Consultancy Services",
+    "Scripting",
+    "Functional Verification Projects",
+    "1-1 Training",
+    "Interview Preparation Courses",
+    "BTech & MTech Internship",
+  ];
+
+  const courseCards = [
+    {
+      title: "Functional Verification For Freshers",
+      courseName: "JobwayTech Verification Foundation",
+      duration: "8 months",
+      enrolled: "2752",
+      tags: ["Live-Classroom", "Online-Live", "e-learning"],
+      categories: [
+        "Freshers",
+        "Short Term Courses",
+        "Functional Verification Projects",
+      ],
+    },
+    {
+      title: "Physical Design Training",
+      courseName: "Corporate Hiring Readiness Program",
+      duration: "8 months",
+      enrolled: "2563",
+      tags: ["Live-Classroom", "Online-Live", "e-learning"],
+      categories: [
+        "Working Professionals",
+        "Protocol Courses",
+        "Consultancy Services",
+      ],
+    },
+    {
+      title: "FPGA Design And Verification",
+      courseName: "FPGA System Design Training",
+      duration: "24 weeks",
+      enrolled: "2985",
+      tags: ["Live-Classroom", "Online-Live", "e-learning"],
+      categories: ["1-1 Training", "Scripting", "BTech & MTech Internship"],
+    },
+    {
+      title: "DFT Training",
+      courseName: "Interview + Placement Accelerator",
+      duration: "8 months",
+      enrolled: "2897",
+      tags: ["Live-Classroom", "Online-Live", "e-learning"],
+      categories: [
+        "Interview Preparation Courses",
+        "Working Professionals",
+        "Freshers",
+      ],
+    },
+  ];
+
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [isGridFading, setIsGridFading] = useState(false);
+
+  const filteredCourseCards = courseCards.filter(
+    (card) =>
+      selectedCategory === "All" || card.categories.includes(selectedCategory),
+  );
+
+  const handleCategoryChange = (category: string) => {
+    if (category === selectedCategory) return;
+
+    setIsGridFading(true);
+    setTimeout(() => {
+      setSelectedCategory(category);
+      setIsGridFading(false);
+    }, GRID_FADE_DURATION_MS / 2);
+  };
+
   return (
     <>
       <Head>
@@ -98,6 +180,107 @@ export default function Home() {
                     Onboarding support
                   </span>
                 </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="relative mx-auto w-full    pb-20   md:pb-24">
+          <div className="  bg-white p-4   md:p-6">
+            <h2 className="text-2xl font-black text-slate-900 sm:text-3xl">
+              Explore JobwayTech Trending Courses
+            </h2>
+
+            <div className="mt-5   gap-4 flex flex-col md:flex-row">
+              <aside className="rounded-xl border md:w-60 h-fit border-slate-200 bg-slate-50 p-3">
+                <p className="mb-3 text-sm font-semibold text-slate-700">
+                  Pick By Category
+                </p>
+                <div className="space-y-1.5">
+                  {categories.map((category) => (
+                    <button
+                      key={category}
+                      type="button"
+                      onClick={() => handleCategoryChange(category)}
+                      className={`w-full rounded-md border px-2.5 py-1.5 text-left text-xs transition ${
+                        selectedCategory === category
+                          ? "border-cyan-300 bg-cyan-100 text-cyan-700"
+                          : "border-slate-300 bg-white text-slate-700 hover:border-cyan-200 hover:text-cyan-700"
+                      }`}
+                    >
+                      {category}
+                    </button>
+                  ))}
+                </div>
+              </aside>
+
+              <div
+                className={`grid flex-1 gap-6 transition-all duration-300 ease-in-out motion-reduce:transition-none md:grid-cols-2 ${
+                  isGridFading ? "opacity-0" : "opacity-100"
+                }`}
+              >
+                {filteredCourseCards.slice(0, 4).map((card, index) => (
+                  <article
+                    key={card.title}
+                    className="overflow-hidden h-fit    rounded-xl border border-slate-200 bg-white shadow-sm"
+                  >
+                    <div
+                      className={`h-28 p-4 text-white ${
+                        index % 2 === 0
+                          ? "bg-linear-to-br from-slate-900 via-cyan-900 to-slate-800"
+                          : "bg-linear-to-br from-slate-800 via-slate-700 to-cyan-800"
+                      }`}
+                    >
+                      <h3 className="text-2 font-bold leading-tight sm:text-lg">
+                        {card.title}
+                      </h3>
+                    </div>
+
+                    <div className="p-3.5">
+                      <p className="text-sm font-semibold text-slate-900">
+                        {card.courseName}
+                      </p>
+
+                      <div className="mt-2 flex items-center justify-between text-[11px] text-slate-600">
+                        <p>Duration : {card.duration}</p>
+                        <p>{card.enrolled} Enrolled</p>
+                      </div>
+
+                      <div className="mt-2 flex flex-wrap gap-1.5">
+                        {card.tags.map((tag) => (
+                          <span
+                            key={tag}
+                            className="rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-medium text-blue-700"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+
+                      <div className="mt-3 grid grid-cols-2 gap-2">
+                        <Link
+                          href="#"
+                          className="rounded-lg border border-blue-500 px-3 py-1.5 text-center text-xs font-semibold text-blue-600 transition hover:bg-blue-50"
+                        >
+                          Know More
+                        </Link>
+                        <Link
+                          href="#"
+                          className="rounded-lg bg-blue-500 px-3 py-1.5 text-center text-xs font-semibold text-white transition hover:bg-blue-600"
+                        >
+                          Schedules
+                        </Link>
+                      </div>
+                    </div>
+                  </article>
+                ))}
+
+                {filteredCourseCards.length === 0 && (
+                  <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-6 text-sm text-slate-600 md:col-span-2">
+                    No courses found for this category yet. Please choose
+                    another category.
+                  </div>
+                )}
               </div>
             </div>
           </div>

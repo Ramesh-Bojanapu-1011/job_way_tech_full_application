@@ -14,20 +14,17 @@ const auth = (props: Props) => {
   const [password, setPassword] = useState("");
   const [userType, setUserType] = useState("user");
   const [isLoading, setIsLoading] = useState(false);
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [currentUser, setCurrentUser] = useState<{
-    username: string;
-    email: string;
-    user_type: string;
-  } | null>(null);
 
   useEffect(() => {
     const loggedIn = authService.isAuthenticated();
-    setIsLoggedIn(loggedIn);
-    setCurrentUser(authService.getUser());
+    if (loggedIn == true || window.location.pathname == "/auth") {
+      return;
+    } else {
+      window.history.replaceState(null, "", "/auth"); // Ensure URL is clean on auth page
+    }
   }, []);
 
   const resetFeedback = () => {
@@ -57,8 +54,7 @@ const auth = (props: Props) => {
           setError(response.message);
         } else {
           setMessage(response.message);
-          setIsLoggedIn(true);
-          setCurrentUser(response.user ?? authService.getUser());
+          setMode("login");
         }
       } else {
         const response = await authService.login({
@@ -69,8 +65,15 @@ const auth = (props: Props) => {
           setError(response.message);
         } else {
           setMessage(response.message);
-          setIsLoggedIn(true);
-          setCurrentUser(response.user ?? authService.getUser());
+          setTimeout(() => {
+            if (response.user?.user_type == "admin") {
+              // Handle admin-specific logic
+              window.location.href = "/admin-dashboard"; // Redirect to admin dashboard
+            } else {
+              // Handle candidate-specific logic
+              window.location.href = "/candidate-dashboard"; // Redirect to candidate dashboard
+            }
+          }, 1000);
         }
       }
     } finally {
@@ -79,21 +82,13 @@ const auth = (props: Props) => {
   };
 
   const handleLogout = async () => {
-    setIsLoggingOut(true);
+    // setIsLoggingOut(true);
     try {
       await authService.logoutWithDeviceTracking();
-      setIsLoggedIn(false);
-      setCurrentUser(null);
-      setUsername("");
-      setEmail("");
-      setPassword("");
-      setMessage("Logged out successfully");
-      setError("");
     } catch (error) {
       setError("Error during logout");
+      alert(error);
       console.error(error);
-    } finally {
-      setIsLoggingOut(false);
     }
   };
 
@@ -245,26 +240,6 @@ const auth = (props: Props) => {
               <p className="mt-3 rounded-lg border border-cyan-200 bg-cyan-50 px-3 py-2 text-sm text-cyan-700">
                 {message}
               </p>
-            )}
-
-            {isLoggedIn && currentUser && (
-              <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-3">
-                <p className="text-sm text-slate-700">
-                  Signed in as <strong>{currentUser.email}</strong>
-                </p>
-                <p className="mt-1 text-sm text-slate-600">
-                  Username: {currentUser.username} | Role:{" "}
-                  {currentUser.user_type}
-                </p>
-                <button
-                  type="button"
-                  onClick={handleLogout}
-                  disabled={isLoggingOut}
-                  className="mt-3 rounded-lg bg-rose-500 px-3 py-2 text-sm font-medium text-white transition hover:bg-rose-600 disabled:cursor-not-allowed disabled:opacity-75"
-                >
-                  {isLoggingOut ? "Logging out..." : "Logout"}
-                </button>
-              </div>
             )}
           </div>
         </section>
