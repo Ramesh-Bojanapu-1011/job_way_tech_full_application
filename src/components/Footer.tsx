@@ -121,10 +121,10 @@ const Footer = (props: Props) => {
         <div className="mt-10 flex flex-col gap-3 border-t border-white/10 pt-5 text-xs text-slate-400 sm:flex-row sm:items-center sm:justify-between">
           <p>Copyright {year} JobwayTech Consultancy & Training.</p>
           <div className="flex gap-4">
-            <Link href="#" className="transition hover:text-cyan-200">
-              Privacy Policy
+            <Link href="/refund_polocy" className="transition hover:text-cyan-200">
+              Refund Policy
             </Link>
-            <Link href="#" className="transition hover:text-cyan-200">
+            <Link href="/terms_and_conditions" className="transition hover:text-cyan-200">
               Terms of Service
             </Link>
           </div>
